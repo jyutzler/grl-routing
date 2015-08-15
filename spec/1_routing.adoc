@@ -1,0 +1,112 @@
+[[tiled_gridded_elevation_data]]
+== Routing Extension (Normative)
+
+=== Extension Title
+
+Routing
+
+=== Introduction
+
+The US Army Geospatial Research Lab (GRL) has identified a need for the ability to store routing information in a GeoPackage. This capability will be used to support routing operations such as shortest path.
+
+
+=== Extension Author
+
+Geospatial Research Lab, author_name `grl`.
+
+=== Extension Name or Template
+
+`grl_routing`
+
+=== Extension Type
+
+New requirements not dependent on existing clauses.
+
+=== Applicability
+
+This extension applies to GeoPackages that are used to hold routing networks.
+
+=== Scope
+
+read-write
+
+=== Requirements
+
+==== Table Definitions
+[[routing_columns]]
+===== Routing Columns
+[requirement] A GeoPackage that contains one or more routing networks SHALL contain a `grl_routing_columns` table or view as per <<grl_routing_columns_table>>.
+Subsequent extensions or custom implementations MAY add additional columns to this table.
+Clients SHALL ignore additional columns that are unrecognized.
+
+[[grl_routing_columns_table]]
+.Routing Columns Table Definition
+[cols=",,,,,",options="header",]
+|=======================================================================
+|Column Name |Column Type |Column Description |Null |Default |Key
+|`id`|INTEGER	|Autoincrement primary key|no||PK
+|`node_table`|TEXT|Name of table containing network nodes|no||
+|`edge_table`|TEXT	|Name of table containing network edges|no||
+|`edge_cost_column`|TEXT|Name of column in `edge_table` containing costs|yes||
+|`edge_start_node_column`|TEXT|Name of column in `edge_table` containing IDs representing the starting node of the edge|no||
+|`edge_end_node_column`|TEXT|Name of column in `edge_table` containing IDs representing the ending node of the edge|no||
+|=======================================================================
+
+===== Routing Results
+[requirement] An application that uses a routing network to perform a routing analysis MAY return its results in a virtual view. If this occurs, the view SHALL have a schema as per <<grl_routing_results>>.
+
+[[grl_routing_results_schema]]
+.Routing Results Schema
+[cols=",,,,,",options="header",]
+|=======================================================================
+|Column Name |Column Type |Column Description |Null |Key
+|`id`|INTEGER	|Autoincrement primary key|no|PK
+|`TBD`|TEXT	|TBD|no|unique
+|=======================================================================
+
+==== Table Values
+===== `gpkg_contents`
+:topology_scope: footnote:[The topological structure of the data is outside the scope of this document.]
+[requirement] (extends http://www.geopackage.org/spec/#_requirement-34[GPKG-34]) The http://www.geopackage.org/spec/#_contents[`gpkg_contents`] table SHALL contain a row with a `table_name` column value of `grl_routing_columns` and a `data_type` column value of `routing`.
+
+===== `gpkg_extensions`
+[requirement] GeoPackages complying with this extension SHALL have a row in the `gpkg_extensions` table as described in <<gpkg_extensions_records>>:
+
+:naming_authority: footnote:[Pending OGC naming authority decision.]
+[[gpkg_extensions_records]]
+.Extensions Table Record
+[cols=",,,",options="header",]
+|=======================================================================
+|`table_name`|`column_name`|`extension_name`|`definition`|`scope`
+|`grl_routing`|null|`gpkg_routing`|TBD {naming_authority}|'read-write'
+|=======================================================================
+
+===== `grl_routing_columns`
+The following requirements refer to the `grl_routing_columns` table as per <<grl_routing_columns_table>>.
+
+[requirement] The table referenced by `node_table` SHALL have an `id` column of type 'INTEGER'.
+
+[requirement] The table referenced by `edge_table` SHALL have an `id` column of type 'INTEGER'.
+
+[requirement] If present, the column referenced by `edge_cost_column` SHALL be of type 'REAL'. If this column is not populated, each node SHALL have an equal weight.
+
+[requirement] The columns referenced by `edge_start_node_column` and `edge_end_node_column` SHALL be of type 'INTEGER'. Records in these columns SHALL reference the `id` column of `node_table`.
+
+===== Routing Results
+TBD
+
+=== Table Definition SQL
+
+TBD
+
+=== References
+
+==== Normative References (Normative)
+
+The following normative documents contain provisions which, through reference in this text, constitute provisions of this document.
+For dated references, subsequent amendments to, or revisions of, any of these publications do not apply.
+However, parties to agreements based on this part of this document are encouraged to investigate the possibility of applying the most recent editions of the normative documents indicated below.
+For undated references, the latest edition of the normative document referred to applies.
+
+[bibliography]
+TBD
